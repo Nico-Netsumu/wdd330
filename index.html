@@ -1,0 +1,50 @@
+
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillForge – One Skill a Month</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>SkillForge</h1>
+    <p>Commit to one skill. Track daily progress. Level up monthly.</p>
+  </header>
+
+  <main>
+    <section id="skill-form-section">
+      <h2>Start a New Skill</h2>
+      <form id="skill-form">
+        <input type="text" id="skill-name" placeholder="Skill Name (e.g., Learn Guitar)" required />
+        <textarea id="skill-goals" placeholder="List 3–5 micro-goals..." required></textarea>
+        <button type="submit">Start Skill</button>
+      </form>
+    </section>
+
+    <section id="progress-section" class="hidden">
+      <h2>Current Skill: <span id="current-skill-title"></span></h2>
+      <ul id="goal-list"></ul>
+      <div id="tracker-container">
+        <p>Track Today’s Practice:</p>
+        <button id="log-practice">✔ I Practiced Today</button>
+        <p id="streak-info"></p>
+      </div>
+    </section>
+
+    <section id="motivation-section">
+      <h2>Today's Motivation</h2>
+      <blockquote id="quote"></blockquote>
+      <cite id="quote-author"></cite>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 SkillForge. Build yourself.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
