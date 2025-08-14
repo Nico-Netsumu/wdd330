@@ -1,4 +1,3 @@
-
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SkillForge – One Skill a Month</title>
-  <link rel= "stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
@@ -15,6 +14,7 @@
   </header>
 
   <main>
+    <!-- Skill Form -->
     <section id="skill-form-section">
       <h2>Start a New Skill</h2>
       <form id="skill-form">
@@ -24,6 +24,7 @@
       </form>
     </section>
 
+    <!-- Progress Tracker -->
     <section id="progress-section" class="hidden">
       <h2>Current Skill: <span id="current-skill-title"></span></h2>
       <ul id="goal-list"></ul>
@@ -34,19 +35,28 @@
       </div>
     </section>
 
+    <!-- Motivation Quote -->
     <section id="motivation-section">
       <h2>Today's Motivation</h2>
       <blockquote id="quote"></blockquote>
       <cite id="quote-author"></cite>
     </section>
+
+    <!-- Learning Articles -->
     <section id="articles-section" class="hidden">
       <h2>Related Articles</h2>
       <ul id="article-list"></ul>
-    </section>    
+    </section>
+
+    <!-- Monthly Challenges -->
+    <section id="monthly-skills-section">
+      <h2>12-Month Skill Plan</h2>
+      <ol id="monthly-skills-list"></ol>
+    </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 SkillForge. Build yourself.</p>
+    <p>&copy; <span id="year"></span> SkillForge. Build yourself.</p>
   </footer>
 
   <script src="script.js"></script>

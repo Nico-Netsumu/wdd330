@@ -1,202 +1,126 @@
-// script.js
+/* script.js */
+/* © SkillForge - 2025 */
 
-// ====== 1. COPYRIGHT DATE ======
-const footer = document.querySelector("footer");
-const year = new Date().getFullYear();
-footer.innerHTML += `<br><small>&copy; ${year}</small>`;
-
-// ====== 2. FETCH A QUOTE FROM ZENQUOTES API ======
-async function getMotivationalQuote() {
-  try {
-    const response = await fetch("https://zenquotes.io/api/random");
-    const data = await response.json();
-    document.getElementById("quote").textContent = `"${data[0].q}"`;
-    document.getElementById("quote-author").textContent = `— ${data[0].a}`;
-  } catch (error) {
-    document.getElementById("quote").textContent = "Stay focused and keep going!";
-    document.getElementById("quote-author").textContent = "";
-  }
-}
-getMotivationalQuote();
-
-// ====== 3. HANDLE SKILL FORM ======
+// -------------------- Variables --------------------
 const skillForm = document.getElementById("skill-form");
 const skillNameInput = document.getElementById("skill-name");
 const skillGoalsInput = document.getElementById("skill-goals");
+const currentSkillTitle = document.getElementById("current-skill-title");
+const goalList = document.getElementById("goal-list");
+const progressSection = document.getElementById("progress-section");
+const logPracticeBtn = document.getElementById("log-practice");
+const streakInfo = document.getElementById("streak-info");
+const quoteEl = document.getElementById("quote");
+const quoteAuthorEl = document.getElementById("quote-author");
+const articleSection = document.getElementById("articles-section");
+const articleList = document.getElementById("article-list");
+const monthlySkillsList = document.getElementById("monthly-skills-list");
+const yearEl = document.getElementById("year");
 
-skillForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const skillName = skillNameInput.value.trim();
-  const goals = skillGoalsInput.value
-    .split("\n")
-    .map((goal) => goal.trim())
-    .filter((goal) => goal !== "");
-
-  if (!skillName || goals.length < 1) {
-    alert("Please enter a skill and at least one micro-goal.");
-    return;
-  }
-
-  const skillData = {
-    name: skillName,
-    goals,
-    log: [],
-    startDate: new Date().toISOString(),
-  };
-
-  localStorage.setItem("skillForge_currentSkill", JSON.stringify(skillData));
-  displaySkill(skillData);
-  skillForm.reset();
-  document.getElementById("progress-section").classList.remove("hidden");
-});
-
-// ====== 4. DISPLAY CURRENT SKILL & GOALS ======
-function displaySkill(skillData) {
-  const title = document.getElementById("current-skill-title");
-  const list = document.getElementById("goal-list");
-
-  title.textContent = skillData.name;
-  list.innerHTML = "";
-
-  skillData.goals.forEach((goal) => {
-    const li = document.createElement("li");
-    li.textContent = goal;
-    list.appendChild(li);
-  });
-
-  updateStreak(skillData);
-
-  // 🔗 Fetch both APIs when displaying skill
-  getMotivationalQuote();
-  getDevToArticles(skillData.name);
-}
-
+// -------------------- Data --------------------
 const skillPool = [
-  "Learn Basic Cooking",
-  "Start Drawing with Pencils",
-  "Practice Public Speaking",
-  "Learn HTML & CSS",
-  "Try Digital Photography",
-  "Write a Short Story",
-  "Practice Meditation",
-  "Learn a New Language Basics",
-  "Try Calligraphy",
-  "Do Basic Woodworking",
-  "Learn Guitar Chords",
-  "Start Gardening",
-  "Practice Origami",
-  "Learn Python Programming",
-  "Create a Personal Budget",
-  "Learn Basic Sewing",
-  "Practice Yoga",
-  "Learn Video Editing",
-  "Build a Birdhouse",
-  "Study World Geography"
+  "Learn Guitar",
+  "Master Excel",
+  "Photography Basics",
+  "Intro to Coding",
+  "Cooking International Dishes",
+  "Speed Reading",
+  "Public Speaking",
+  "Meditation & Mindfulness",
+  "Drawing & Sketching",
+  "Basic Car Maintenance",
+  "Yoga",
+  "Creative Writing",
+  "First Aid",
+  "Sign Language",
+  "Salsa Dancing",
+  "Gardening",
+  "3D Printing",
+  "Podcasting",
+  "Video Editing",
+  "Chess Strategy"
 ];
 
-function generateYearlySkills() {
-  const shuffled = [...skillPool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 12);
-}
+// -------------------- Init --------------------
+document.addEventListener("DOMContentLoaded", () => {
+  yearEl.textContent = new Date().getFullYear();
+  generateMonthlySkills();
+  fetchMotivation();
+});
 
-function displayYearlyPlan() {
-  const planContainer = document.getElementById("yearly-plan");
-  planContainer.innerHTML = "";
-
-  const skills = generateYearlySkills();
-  skills.forEach((skill, index) => {
-    const monthItem = document.createElement("li");
-    monthItem.textContent = `Month ${index + 1}: ${skill}`;
-    planContainer.appendChild(monthItem);
+// -------------------- Generate 12 Random Skills --------------------
+function generateMonthlySkills() {
+  const shuffled = skillPool.sort(() => 0.5 - Math.random());
+  const chosen = shuffled.slice(0, 12);
+  monthlySkillsList.innerHTML = "";
+  chosen.forEach((skill, i) => {
+    const li = document.createElement("li");
+    li.textContent = `Month ${i + 1}: ${skill}`;
+    monthlySkillsList.appendChild(li);
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  displayYearlyPlan();
+// -------------------- Form Submit --------------------
+skillForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const skillName = skillNameInput.value.trim();
+  const goals = skillGoalsInput.value.trim().split("\n");
+
+  if (!skillName || goals.length === 0) return;
+
+  currentSkillTitle.textContent = skillName;
+  goalList.innerHTML = "";
+  goals.forEach((g) => {
+    const li = document.createElement("li");
+    li.textContent = g;
+    goalList.appendChild(li);
+  });
+
+  progressSection.classList.remove("hidden");
+  skillForm.reset();
+  fetchArticles(skillName);
 });
 
-<section id="year-plan-section">
-  <h2>12-Month Skill Plan</h2>
-  <ul id="yearly-plan"></ul>
-</section>
-
-// ====== 5. LOG PRACTICE & UPDATE STREAK ======
-const logBtn = document.getElementById("log-practice");
-logBtn.addEventListener("click", () => {
-  const skillData = JSON.parse(localStorage.getItem("skillForge_currentSkill"));
-
-  const today = new Date().toISOString().split("T")[0];
-  if (!skillData.log.includes(today)) {
-    skillData.log.push(today);
-    localStorage.setItem("skillForge_currentSkill", JSON.stringify(skillData));
-    updateStreak(skillData);
-  } else {
-    alert("You've already logged practice today!");
-  }
-});
-
-function updateStreak(skillData) {
-  const streakInfo = document.getElementById("streak-info");
-
-  const logDates = skillData.log.map((date) => new Date(date));
-  logDates.sort((a, b) => b - a); // newest first
-
-  let streak = 0;
-  let currentDate = new Date();
-
-  for (let i = 0; i < logDates.length; i++) {
-    const diff = (currentDate - logDates[i]) / (1000 * 60 * 60 * 24);
-    if (diff <= 1) {
-      streak++;
-      currentDate.setDate(currentDate.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-
+// -------------------- Practice Tracker --------------------
+let streak = 0;
+logPracticeBtn.addEventListener("click", () => {
+  streak++;
   streakInfo.textContent = `🔥 Streak: ${streak} day(s) in a row`;
+});
+
+// -------------------- Fetch Motivation Quote --------------------
+function fetchMotivation() {
+  fetch("https://type.fit/api/quotes")
+    .then((res) => res.json())
+    .then((data) => {
+      const randomQuote = data[Math.floor(Math.random() * data.length)];
+      quoteEl.textContent = randomQuote.text;
+      quoteAuthorEl.textContent = randomQuote.author || "Unknown";
+    })
+    .catch(() => {
+      quoteEl.textContent = "Keep pushing, your future self will thank you.";
+      quoteAuthorEl.textContent = "SkillForge";
+    });
 }
 
-// ====== 6. LOAD DATA IF ALREADY STORED ======
-window.addEventListener("DOMContentLoaded", () => {
-  const saved = localStorage.getItem("skillForge_currentSkill");
-  if (saved) {
-    const skillData = JSON.parse(saved);
-    displaySkill(skillData);
-    document.getElementById("progress-section").classList.remove("hidden");
-  }
-});
-// ====== 7. FETCH RELATED ARTICLES FROM DEV.TO ======
-async function getDevToArticles(skillName) {
-  const articleList = document.getElementById("article-list");
-  articleList.innerHTML = "<li>Loading articles...</li>";
-
-  const tag = encodeURIComponent(skillName.toLowerCase());
-  const url = `https://dev.to/api/articles?tag=${tag}&per_page=5`;
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch articles");
-
-    const articles = await response.json();
-
-    if (articles.length === 0) {
-      articleList.innerHTML = `<li>No related articles found for "${skillName}".</li>`;
-      return;
-    }
-
-    articleList.innerHTML = "";
-    articles.forEach((article) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
-      articleList.appendChild(li);
+// -------------------- Fetch Related Articles --------------------
+function fetchArticles(skill) {
+  fetch(`https://dev.to/api/articles?tag=${encodeURIComponent(skill)}`)
+    .then((res) => res.json())
+    .then((data) => {
+      articleList.innerHTML = "";
+      if (data.length > 0) {
+        articleSection.classList.remove("hidden");
+        data.slice(0, 5).forEach((article) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
+          articleList.appendChild(li);
+        });
+      } else {
+        articleSection.classList.add("hidden");
+      }
+    })
+    .catch(() => {
+      articleSection.classList.add("hidden");
     });
-
-    document.getElementById("articles-section").classList.remove("hidden");
-
-  } catch (error) {
-    articleList.innerHTML = `<li>Unable to load articles.</li>`;
-    console.error(error);
-  }
 }
