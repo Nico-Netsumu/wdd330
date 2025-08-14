@@ -114,3 +114,36 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("progress-section").classList.remove("hidden");
   }
 });
+// ====== 7. FETCH RELATED ARTICLES FROM DEV.TO ======
+async function getDevToArticles(skillName) {
+  const articleList = document.getElementById("article-list");
+  articleList.innerHTML = "<li>Loading articles...</li>";
+
+  const tag = encodeURIComponent(skillName.toLowerCase());
+  const url = `https://dev.to/api/articles?tag=${tag}&per_page=5`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch articles");
+
+    const articles = await response.json();
+
+    if (articles.length === 0) {
+      articleList.innerHTML = `<li>No related articles found for "${skillName}".</li>`;
+      return;
+    }
+
+    articleList.innerHTML = "";
+    articles.forEach((article) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
+      articleList.appendChild(li);
+    });
+
+    document.getElementById("articles-section").classList.remove("hidden");
+
+  } catch (error) {
+    articleList.innerHTML = `<li>Unable to load articles.</li>`;
+    console.error(error);
+  }
+}
