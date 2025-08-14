@@ -66,6 +66,10 @@ function displaySkill(skillData) {
   });
 
   updateStreak(skillData);
+
+  // 🔗 Fetch both APIs when displaying skill
+  getMotivationalQuote();
+  getDevToArticles(skillData.name);
 }
 
 // ====== 5. LOG PRACTICE & UPDATE STREAK ======
