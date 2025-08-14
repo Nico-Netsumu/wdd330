@@ -1,5 +1,54 @@
 // script.js
 
+const skillPool = [
+  "Learn Basic Cooking",
+  "Start Drawing with Pencils",
+  "Practice Public Speaking",
+  "Learn HTML & CSS",
+  "Try Digital Photography",
+  "Write a Short Story",
+  "Practice Meditation",
+  "Learn a New Language Basics",
+  "Try Calligraphy",
+  "Do Basic Woodworking",
+  "Learn Guitar Chords",
+  "Start Gardening",
+  "Practice Origami",
+  "Learn Python Programming",
+  "Create a Personal Budget",
+  "Learn Basic Sewing",
+  "Practice Yoga",
+  "Learn Video Editing",
+  "Build a Birdhouse",
+  "Study World Geography"
+];
+
+function generateYearlySkills() {
+  const shuffled = [...skillPool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 12);
+}
+
+function displayYearlyPlan() {
+  const planContainer = document.getElementById("yearly-plan");
+  planContainer.innerHTML = "";
+
+  const skills = generateYearlySkills();
+  skills.forEach((skill, index) => {
+    const monthItem = document.createElement("li");
+    monthItem.textContent = `Month ${index + 1}: ${skill}`;
+    planContainer.appendChild(monthItem);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  displayYearlyPlan();
+});
+
+<section id="year-plan-section">
+  <h2>12-Month Skill Plan</h2>
+  <ul id="yearly-plan"></ul>
+</section>
+
 // ====== 1. COPYRIGHT DATE ======
 const footer = document.querySelector("footer");
 const year = new Date().getFullYear();
