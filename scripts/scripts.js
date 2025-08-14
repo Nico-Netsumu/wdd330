@@ -153,3 +153,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   init();
 });
+
+// Load task from localStorage
+const taskKey = 'currentSkillTask';
+let taskDisplay = document.getElementById('taskDisplay');
+let taskEdit = document.getElementById('taskEdit');
+let editBtn = document.getElementById('edit');
+let saveBtn = document.getElementById('save');
+
+function loadTask() {
+  const savedTask = localStorage.getItem(taskKey) || 'No task set yet.';
+  taskDisplay.textContent = savedTask;
+  taskEdit.value = savedTask;
+}
+
+// Show textarea for editing
+editBtn.addEventListener('click', () => {
+  taskDisplay.style.display = 'none';
+  taskEdit.style.display = 'block';
+  editBtn.style.display = 'none';
+  saveBtn.style.display = 'inline-block';
+});
+
+// Save task
+saveBtn.addEventListener('click', () => {
+  const newTask = taskEdit.value.trim();
+  if(newTask) {
+    localStorage.setItem(taskKey, newTask);
+    taskDisplay.textContent = newTask;
+  }
+  taskDisplay.style.display = 'block';
+  taskEdit.style.display = 'none';
+  editBtn.style.display = 'inline-block';
+  saveBtn.style.display = 'none';
+});
+
+loadTask();
