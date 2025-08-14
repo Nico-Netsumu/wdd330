@@ -34,6 +34,24 @@ section {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Form Container */
+#skill-form {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  gap: 0.5rem; /* Space between inputs */
+}
+
+/* Make inputs and textarea full width */
+#skill-form input,
+#skill-form textarea,
+#skill-form button {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+
 .hidden {
   display: none;
 }
